@@ -5,17 +5,27 @@ services:
 language: node_js
 node_js:
   - "6"
+env:
+  global:
+    - CACHE_DIR=$HOME/.cache/docker
+    - CACHE_FILE_FEDORA=$CACHE_DIR/fedora.tar.gz
+    - CACHE_FILE_WEB=$CACHE_DIR/web.tar.gz
+    - CACHE_FILE_API=$CACHE_DIR/api.tar.gz
+    - CACHE_FILE_END_TO_END=$CACHE_DIR/e2e.tar.gz
+  matrix:
+    - COMMAND=eslint
+    - COMMAND=stylelint
+    - COMMAND=build-test
+    - COMMAND=unit-test
+    - COMMAND=end-to-end-test
 cache:
   directories:
   - node_modules # NPM packages
+  - $CACHE_DIR
 before_install:
-  - npm install
-  - node run build
-env:
-  - COMMAND=eslint
-  - COMMAND=stylelint
-  - COMMAND=unit-test
-  - COMMAND=end-to-end-test
+  - if [ "$COMMAND" == "end-to-end-test" ]; then make e2e-before-install; fi
+install:
+  - if [ "$COMMAND" == "end-to-end-test" ]; then make e2e-install; fi
 script:
   - make "$COMMAND"
 after_success:
