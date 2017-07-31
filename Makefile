@@ -36,7 +36,7 @@ e2e-install:
 	sudo docker run -d --name api --restart=always -p 4000:4000 -v bdcs-recipes-volume:/bdcs-recipes -v `pwd`:/mddb --network welder --security-opt label=disable weld/bdcs-api
 	sudo docker run -d --name web --restart=always -p 80:3000 --network welder weld/web
 	mkdir -p $CACHE_DIR
-	if [[ ${TRAVIS_BRANCH} == "master" ]] && [[ ${TRAVIS_PULL_REQUEST} == "false" ]]; then sudo docker save weld/fedora:25 | gzip > ${CACHE_FILE_FEDORA}; fi
-	if [[ ${TRAVIS_BRANCH} == "master" ]] && [[ ${TRAVIS_PULL_REQUEST} == "false" ]]; then sudo docker save weld/web:latest | gzip > ${CACHE_FILE_WEB}; fi
-	if [[ ${TRAVIS_BRANCH} == "master" ]] && [[ ${TRAVIS_PULL_REQUEST} == "false" ]]; then sudo docker save weld/bdcs-api:latest | gzip > ${CACHE_FILE_API}; fi
-	if [[ ${TRAVIS_BRANCH} == "master" ]] && [[ ${TRAVIS_PULL_REQUEST} == "false" ]]; then sudo docker save weld/end-to-end:latest | gzip > ${CACHE_FILE_END_TO_END}; fi
+	sudo docker save weld/fedora:25 | gzip > ${CACHE_FILE_FEDORA}
+	sudo docker save weld/web:latest | gzip > ${CACHE_FILE_WEB}
+	sudo docker save weld/bdcs-api:latest | gzip > ${CACHE_FILE_API}
+	sudo docker save weld/end-to-end:latest | gzip > ${CACHE_FILE_END_TO_END}
