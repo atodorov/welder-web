@@ -64,10 +64,10 @@ metadata.db:
 shared: metadata.db
 	if [ -n "$$TRAVIS" ]; then \
 	    sudo docker build -f Dockerfile.nodejs --cache-from welder/web-nodejs:latest -t welder/web-nodejs:latest . ; \
-	    sudo docker build -f ./test/end-to-end/Dockerfile --cache-from welder/web-e2e-tests:latest -t welder/web-e2e-tests:latest ./test/end-to-end/; \
+	    sudo docker build -f Dockerfile.e2e-tests --cache-from welder/web-e2e-tests:latest -t welder/web-e2e-tests:latest .; \
 	else \
 	    sudo docker build -f Dockerfile.nodejs -t welder/web-nodejs:latest . ; \
-	    sudo docker build -f ./test/end-to-end/Dockerfile -t welder/web-e2e-tests:latest ./test/end-to-end/ ; \
+	    sudo docker build -f Dockerfile.e2e-tests -t welder/web-e2e-tests:latest . ; \
 	fi;
 
 	sudo mkdir -p failed-image

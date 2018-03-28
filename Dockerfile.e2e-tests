@@ -12,14 +12,14 @@ libcap-devel cups-devel libXtst-devel alsa-lib-devel libXrandr-devel GConf2-deve
 
 CMD ["xvfb-run", "-a", "-s", "-screen 0 1024x768x24", "npm", "run", "test"]
 
-## Do the things more likely to change below here. ##
+COPY . /welder-web/
 
-# Update node dependencies only if they have changed
-COPY ./package.json /end2end/package.json
-RUN cd /end2end/ && npm install --only=production
+# install dependencies needed by the main application
+WORKDIR /welder-web/
+RUN npm install
 
-# Copy the rest of the UI files over and compile them
-COPY . /end2end/
+# install dependencies needed by the tests
+WORKDIR /welder-web/test/end-to-end/
+RUN npm install --only=production
 
-COPY entrypoint.sh /usr/local/bin/entrypoint.sh
-ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+ENTRYPOINT ["/welder-web/test/end-to-end/entrypoint.sh"]
