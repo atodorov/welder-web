@@ -1,58 +1,31 @@
 // Functions working with BDCS API
-const request = require('request-promise-native');
 const pageConfig = require('../config');
+const utils = require('../../../core/utils');
+const constants = require('../../../core/constants');
+const BlueprintApi = require('../../../data/BlueprintApi');
+const MetadataApi = require('../../../data/MetadataApi');
 
 module.exports = {
   // BDCS API + Web service checking
-  serviceCheck: () => {
-    const bdcsOptions = {
-      method: 'GET',
-      uri: `${pageConfig.api.uri}${pageConfig.api.test}`,
-    };
-    const webOptions = {
-      method: 'GET',
-      uri: pageConfig.root,
-    };
-
-    return Promise.all([request(bdcsOptions), request(webOptions)]);
-  },
+  serviceCheck: () => Promise.all([utils.apiFetch('/api/v0/test'), utils.apiFetch(pageConfig.root)]),
 
   // Create a new blueprint
-  newBlueprint: (body, done) => {
-    const options = {
-      method: 'POST',
-      uri: `${pageConfig.api.uri}${pageConfig.api.newBlueprint}`,
-      json: true,
-      body,
-    };
-
-    request(options)
+  newBlueprint: (blueprintName, done) => {
+    BlueprintApi.postBlueprint(blueprintName)
       .then(() => { done(); })
       .catch((error) => { done(error); });
   },
 
   // Delete a blueprint
   deleteBlueprint: (blueprintName, done) => {
-    const options = {
-      method: 'DELETE',
-      uri: `${pageConfig.api.uri}${pageConfig.api.deleteBlueprint}${blueprintName}`,
-      json: true,
-    };
-
-    request(options)
+    BlueprintApi.deleteBlueprint(blueprintName)
       .then(() => { done(); })
       .catch((error) => { done(error); });
   },
 
   // Get module info
   moduleInfo: (moduleName, callback, done) => {
-    const options = {
-      method: 'GET',
-      uri: `${pageConfig.api.uri}${pageConfig.api.moduleInfo}${moduleName}`,
-      json: true,
-    };
-
-    request(options)
+    MetadataApi.getData(constants.get_modules_info + moduleName)
       .then((resp) => {
         callback(resp.modules);
       })
@@ -61,13 +34,7 @@ module.exports = {
 
   // Get total number of pcakges
   moduleListTotalPackages: (callback, done) => {
-    const options = {
-      method: 'GET',
-      uri: `${pageConfig.api.uri}${pageConfig.api.moduleListTotalPackages}`,
-      json: true,
-    };
-
-    request(options)
+    utils.apiFetch(`${constants.get_modules_list}?limit=0&offset=0`)
       .then((resp) => {
         callback(resp.total);
       })
