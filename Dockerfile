@@ -1,12 +1,20 @@
-FROM welder/web-nodejs:latest
+FROM fedora:latest
 LABEL maintainer="Brian C. Lane" \
       email="bcl@redhat.com" \
       baseimage="Fedora:latest" \
       description="A welder-web container running on Fedora"
-RUN dnf install -y nginx
+
+ARG NODE_FILE
+
+RUN dnf install --setopt=deltarpm=0 --verbose -y gnupg tar xz curl nginx && dnf clean all
 
 CMD nginx -g "daemon off;"
 EXPOSE 3000
+
+RUN echo 'PATH=/usr/local/bin/:$PATH' >> /etc/bashrc
+
+COPY $NODE_FILE .
+RUN tar -xJf $NODE_FILE -C /usr/local --strip-components=1
 
 ## Do the things more likely to change below here. ##
 
@@ -21,4 +29,4 @@ RUN cd /welder/ && npm install
 
 # Copy the rest of the UI files over and compile them
 COPY . /welder/
-RUN cd /welder/ && node run build
+RUN cd /welder/ && node run build --with-coverage

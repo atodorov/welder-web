@@ -1,10 +1,17 @@
-FROM welder/web-nodejs:latest
+FROM fedora:latest
 LABEL maintainer="Xiaofeng Wang" \
       email="xiaofwan@redhat.com" \
       baseimage="Fedora:latest" \
       description="A welder-web end to end test runner container running on Fedora"
 
-RUN dnf --setopt=deltarpm=0 --verbose install -y tigervnc-server which xclip firefox java
+ARG NODE_FILE
+
+RUN dnf --setopt=deltarpm=0 --verbose install -y gnupg tar xz curl tigervnc-server which xclip firefox java && dnf clean all
+
+RUN echo 'PATH=/usr/local/bin/:$PATH' >> /etc/bashrc
+
+COPY $NODE_FILE .
+RUN tar -xJf $NODE_FILE -C /usr/local --strip-components=1
 
 RUN mkdir /end2end/
 WORKDIR /end2end/
