@@ -6,15 +6,10 @@ LABEL maintainer="Brian C. Lane" \
 
 ARG NODE_FILE
 
-RUN dnf install --setopt=deltarpm=0 --verbose -y gnupg tar xz curl nginx && dnf clean all
+RUN dnf install --setopt=deltarpm=0 --verbose -y gnupg tar xz curl nginx nodejs && dnf clean all
 
 CMD nginx -g "daemon off;"
 EXPOSE 3000
-
-RUN echo 'PATH=/usr/local/bin/:$PATH' >> /etc/bashrc
-
-COPY $NODE_FILE .
-RUN tar -xJf $NODE_FILE -C /usr/local --strip-components=1
 
 ## Do the things more likely to change below here. ##
 

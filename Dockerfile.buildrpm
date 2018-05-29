@@ -6,12 +6,7 @@ LABEL maintainer="Xiaofeng Wang" \
 
 ARG NODE_FILE
 
-RUN dnf install -y make cmake rpm-build gnupg tar xz curl jq && dnf clean all
-
-RUN echo 'PATH=/usr/local/bin/:$PATH' >> /etc/bashrc
-
-COPY $NODE_FILE .
-RUN tar -xJf $NODE_FILE -C /usr/local --strip-components=1
+RUN dnf install -y make cmake rpm-build gnupg tar xz curl jq nodejs && dnf clean all
 
 WORKDIR /welder
 CMD ["make", "rpm"]

@@ -1,7 +1,6 @@
 # Extract the version from package.json
 VERSION=$(shell $(CURDIR)/rpmversion.sh | cut -d - -f 1)
 RELEASE=$(shell $(CURDIR)/rpmversion.sh | cut -d - -f 2)
-NODE_VERSION = 6.9.1
 
 all: npm-install
 	NODE_ENV=$(NODE_ENV) npm run build
@@ -54,39 +53,17 @@ stylelint:
 unit-test:
 	npm run test:cov
 
-download-nodejs:
-	for key in \
-		9554F04D7259F04124DE6B476D5A82AC7E37093B \
-		94AE36675C464D64BAFA68DD7434390BDBE9B9C5 \
-		0034A06D9D9B0064CE8ADF6BF1747F4AD2306D93 \
-		FD3A5288F042B6850C66B31F09FE44734EB7990E \
-		71DCFD284A79C3B38668286BC97EC7A07EDE3FC1 \
-		DD8F2338BAE7501E3DD5AC78C273792F7D83545D \
-		B9AE9905FFD7803F25714661B63B535A4C206CA9 \
-		C4F0DFFF4E8C1A8236409D08E73BC641CC11F4C8 \
-  	; do \
-    	gpg --keyserver pool.sks-keyservers.net --recv-keys "$$key"; \
-  	done
-
-	curl -SLO "https://nodejs.org/dist/v$(NODE_VERSION)/node-v$(NODE_VERSION)-linux-x64.tar.xz"
-	curl -SLO "https://nodejs.org/dist/v$(NODE_VERSION)/SHASUMS256.txt.asc"
-	gpg --batch --decrypt --output SHASUMS256.txt SHASUMS256.txt.asc
-	grep " node-v$(NODE_VERSION)-linux-x64.tar.xz$$" SHASUMS256.txt | sha256sum -c -
-	rm SHASUMS256.txt.asc SHASUMS256.txt
-
 metadata.db:
 	sudo docker build -f Dockerfile.metadata -t welder/import-metadata .
 	sudo docker run --name import-metadata welder/import-metadata:latest
 	sudo docker cp import-metadata:/metadata.db .
 	sudo docker rm import-metadata
 
-shared: metadata.db download-nodejs
-	sudo cp "node-v$(NODE_VERSION)-linux-x64.tar.xz" test/end-to-end/
-
+shared: metadata.db
 	if [ -n "$$TRAVIS" ]; then \
-	    sudo docker build --build-arg NODE_FILE="node-v$(NODE_VERSION)-linux-x64.tar.xz" -f ./test/end-to-end/Dockerfile --cache-from welder/web-e2e-tests:latest -t welder/web-e2e-tests:latest ./test/end-to-end/; \
+	    sudo docker build -f ./test/end-to-end/Dockerfile --cache-from welder/web-e2e-tests:latest -t welder/web-e2e-tests:latest ./test/end-to-end/; \
 	else \
-	    sudo docker build --build-arg NODE_FILE="node-v$(NODE_VERSION)-linux-x64.tar.xz" -f ./test/end-to-end/Dockerfile -t welder/web-e2e-tests:latest ./test/end-to-end/ ; \
+	    sudo docker build -f ./test/end-to-end/Dockerfile -t welder/web-e2e-tests:latest ./test/end-to-end/ ; \
 	fi;
 
 	sudo mkdir -p failed-image
@@ -96,9 +73,9 @@ shared: metadata.db download-nodejs
 
 end-to-end-test: shared
 	if [ -n "$$TRAVIS" ]; then \
-	    sudo docker build --build-arg NODE_FILE="node-v$(NODE_VERSION)-linux-x64.tar.xz" --cache-from welder/web:latest -t welder/web:latest . ; \
+	    sudo docker build --cache-from welder/web:latest -t welder/web:latest . ; \
 	else \
-	    sudo docker build --build-arg NODE_FILE="node-v$(NODE_VERSION)-linux-x64.tar.xz" -t welder/web:latest . ; \
+	    sudo docker build -t welder/web:latest . ; \
 	fi;
 
 	sudo docker run -d --name web -p 3000:3000 --restart=always --network welder welder/web:latest
@@ -116,9 +93,9 @@ end-to-end-test: shared
 
 build-rpm:
 	if [ -n "$$TRAVIS" ]; then \
-	    sudo docker build --build-arg NODE_FILE="node-v$(NODE_VERSION)-linux-x64.tar.xz" -f Dockerfile.buildrpm --cache-from welder/buildrpm:latest -t welder/buildrpm:latest .; \
+	    sudo docker build -f Dockerfile.buildrpm --cache-from welder/buildrpm:latest -t welder/buildrpm:latest .; \
 	else \
-	    sudo docker build --build-arg NODE_FILE="node-v$(NODE_VERSION)-linux-x64.tar.xz" -f Dockerfile.buildrpm -t welder/buildrpm:latest .; \
+	    sudo docker build -f Dockerfile.buildrpm -t welder/buildrpm:latest .; \
 	fi;
 
 	sudo docker run --rm --name buildrpm -v `pwd`:/welder welder/buildrpm:latest
