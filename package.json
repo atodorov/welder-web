@@ -1,5 +1,5 @@
 {
-  "name": "cockpit-composer",
+  "name": "welder-web",
   "version": "0.0.1",
   "private": true,
   "engines": {
@@ -7,21 +7,21 @@
     "npm": ">=5.0"
   },
   "dependencies": {
-    "babel-polyfill": "6.26.0",
-    "classnames": "2.2.6",
-    "fastclick": "1.0.6",
-    "history": "3.3.0",
-    "jquery": "3.3.1",
-    "patternfly": "3.54.8",
-    "patternfly-react": "1.9.3",
-    "react": "15.6.2",
-    "react-dom": "15.6.2",
-    "react-intl": "2.7.2",
-    "react-redux": "5.1.1",
-    "redux": "3.7.2",
-    "redux-saga": "0.15.3",
-    "reselect": "3.0.1",
-    "whatwg-fetch": "1.1.1"
+    "babel-polyfill": "~6.9.1",
+    "classnames": "~2.2.6",
+    "fastclick": "~1.0.6",
+    "history": "~3.0.0",
+    "jquery": "~3.3.1",
+    "patternfly": "~3.59.0",
+    "patternfly-react": "~1.9.3",
+    "react": "~15.6.2",
+    "react-dom": "~15.6.2",
+    "react-intl": "~2.4.0",
+    "react-redux": "~5.0.5",
+    "redux": "~3.6.0",
+    "redux-saga": "~0.15.3",
+    "reselect": "~3.0.1",
+    "whatwg-fetch": "~1.0.0"
   },
   "devDependencies": {
     "assets-webpack-plugin": "^3.9.6",
@@ -149,9 +149,6 @@
       "jest": true
     }
   },
-  "eslintIgnore": [
-    "/test/end-to-end/node_modules"
-  ],
   "stylelint": {
     "extends": "stylelint-config-standard",
     "rules": {
