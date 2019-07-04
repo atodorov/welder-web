@@ -3,7 +3,9 @@
   "version": "1.0.0",
   "description": "The end to end test for cockpit-composer",
   "scripts": {
-    "test": "wdio"
+    "test": "wdio",
+    "snyk-protect": "snyk protect",
+    "prepublish": "npm run snyk-protect"
   },
   "author": "Xiaofeng Wang",
   "license": "MIT",
@@ -12,7 +14,8 @@
     "del": "^3.0.0",
     "faker": "^4.1.0",
     "path": "^0.12.7",
-    "webdriverio": "^4.14.0"
+    "webdriverio": "^4.14.0",
+    "snyk": "^1.189.0"
   },
   "devDependencies": {
     "mochawesome": "^3.1.1",
@@ -21,5 +24,6 @@
     "wdio-mochawesome-reporter": "^2.0.1",
     "mochawesome-report-generator": "^3.1.4",
     "wdio-spec-reporter": "^0.1.5"
-  }
+  },
+  "snyk": true
 }
